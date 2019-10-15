@@ -513,7 +513,6 @@ def getMaketIndex():
 				['s_sz399979','大宗商品'],
 				['s_sz399982','500等权']]
 	todayCode = codeList[random.randint(0,len(codeList)-1)]
-	print(todayCode)
 	codeUrl = BeautifulSoup(urllib.request.urlopen('http://hq.sinajs.cn/list=' + todayCode[0]).read(), 'html.parser').string.replace(',','\n').splitlines(False)
 	print('当前%s： %s' %(todayCode[1],codeUrl[1]))
 	return codeUrl[1]
