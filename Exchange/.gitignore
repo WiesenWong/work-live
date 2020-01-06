@@ -1,0 +1,5 @@
+.idea
+*.pyc
+latex
+extra
+.DS_Store
