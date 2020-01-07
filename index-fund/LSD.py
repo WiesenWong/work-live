@@ -2,7 +2,9 @@
 from datetime import datetime
 import requests as rs
 import requests
+import matplotlib.pyplot as plt
 import json
+import random
 
 BASE_HEADLINE = '螺丝钉定投实盘'
 
@@ -13,17 +15,19 @@ def getDateTime():
     return _date
 
 def getHeadLind(date):
-    return BASE_HEADLINE + '｜第 '+ datetime.fromtimestamp(date).strftime('%Y-%m-%d') +' 期'
-    
-def getUrl():
+    return BASE_HEADLINE + '｜第 '+ timestamp2datetime(date).strftime('%Y-%m-%d') +' 期'
+
+def timestamp2datetime(timestamp):
+    return datetime.fromtimestamp(timestamp)
+   
+def getUrl(url):
     #获取最新一期螺丝钉定投实盘
-    url = 'https://danjuanapp.com/djapi/plan/CSI666/trade_history?size=1&page=1'
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
     response = rs.get(url,headers=headers)
-    d = json.loads(response.text)
-    return d['data']['items'][0]
+    data = json.loads(response.text)
+    return data
 
-def getInvestor(trading_elements,investmentAmount = 10000):
+def getInvestor(trading_elements,headLind,investmentAmount = 10000):
     total = 0
     print()
     print(headLind)
@@ -37,12 +41,38 @@ def getInvestor(trading_elements,investmentAmount = 10000):
         print('code: ' + item['fd_code'])
         print('investmentAmount: ' + str(round(float(investmentAmount) * item['portion'])))
         print('------------------------------------------------------------')
-        
+
+def showPic(codelist):
+    #519671
+    for code in codelist:
+        colors = (random.randint(0,1),random.randint(0,1),random.randint(0,1))
+        url = 'https://danjuanapp.com/djapi/fund/estimate-nav/'+ code
+        data = getUrl(url)['data']
+        plt.plot(getdata(data,'time'),getdata(data,'percentage'),color=colors)
+    plt.show()
+    return 0
+
+def getdata(data,xtype = 'time'):
+    a = []
+    for item in data['items']:
+        if xtype == 'time':
+            a.append(timestamp2datetime(item['time']/1000).strftime('%H:%M'))
+        else:
+            a.append(item[xtype])
+    return a
+def getcodelist(trading_elements):
+    a = []
+    for item in trading_elements:
+        a.append(item['fd_code'])
+    return a    
 if __name__ == '__main__':
     print('Welcome to use the system of index fund')
-    investmentAmount = 1000
+    investmentAmount = 2000
     getDateTime()
-    data = getUrl()
+    url = 'https://danjuanapp.com/djapi/plan/CSI666/trade_history?size=1&page=1'
+    data = getUrl(url)['data']['items'][0]
     headLind = getHeadLind(float(data['trade_date'])/1000)
-    getInvestor(data['trading_elements'],investmentAmount)
+    codelist = getcodelist(data['trading_elements'])
+    #showPic(codelist)
+    getInvestor(data['trading_elements'],headLind,investmentAmount)
     
