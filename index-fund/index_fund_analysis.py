@@ -5,6 +5,7 @@ import requests
 import matplotlib.pyplot as plt
 import json
 import matplotlib.font_manager as fm
+import numpy as np
 
 myfont = fm.FontProperties(fname=r'C:\Windows\Fonts\STXINWEI.TTF')
 
@@ -16,6 +17,17 @@ base_fund_num = [
             4399.61,
             394.33,
             2403.86]
+
+cost = [
+        1.4700,
+        0.9551,
+        1.6540,
+        2.2171,
+        0.9457,
+        1.8571,
+        1.2559]
+
+
 
 def timestamp2datetime(timestamp):
     return datetime.datetime.fromtimestamp(timestamp)
@@ -93,7 +105,94 @@ if __name__ == '__main__':
             '070023',
             '001594'
             ]
+    
+    a = np.array(base_fund_num)
+    b = np.array(cost)
+    print(a * b)
+    print(np.sum(a * b))
+    
+    act_cost = np.array([
+            [153.0,
+            195.0,
+            192.0,
+            192.0,
+            192.0,
+            184.41,
+            188.20,
+            558.30,
+            424.00,
+            424.00,
+            846.80,
+            381.75,
+            516.00
+            ],
+            [116.00,
+            144.00,
+            143.00,
+            140.00,
+            137.00,
+            143.00,
+            142.70,
+            411.30
+            ],
+            [150.00,
+            187.00,
+            188.00,
+            188.00,
+            190.00,
+            187.90,
+            188.70,
+            558.90,
+            443.00,
+            443.00,
+            897.60,
+            402.15,
+            534.00],
+            
+            
+            [123.00,
+            158.00,
+            152.00,
+            153.00,
+            156.00,
+            155.40,
+            155.70,
+            445.50,
+            338.60,
+            338.60,
+            668.80],
+            
+            [144.00,
+            176.00,
+            180.00,
+            180.00,
+            180.00,
+            179.10,
+            177.60,
+            514.20,
+            399.00,
+            399.00,
+            808.00,
+            354.60,
+            469.00],
+            
+            [145.00,
+            146.00,
+            146.00,
+            148.20,
+            147.10],
+            
+            [511.80,
+            395.40,
+            395.40,
+            778.80,
+            95.09,
+            361.50,
+            481.00]
+            ])
+    #print(np.sum(act_cost))
     indexlist = showPic(codelist)
-    print(indexlist)
+    #print(np.array(indexlist))
+    print(np.sum(np.array(indexlist).T[6] * a))
     
     

@@ -67,7 +67,7 @@ def getcodelist(trading_elements):
     return a    
 if __name__ == '__main__':
     print('Welcome to use the system of index fund')
-    investmentAmount = 2000
+    investmentAmount = 1500
     getDateTime()
     url = 'https://danjuanapp.com/djapi/plan/CSI666/trade_history?size=1&page=1'
     data = getUrl(url)['data']['items'][0]
