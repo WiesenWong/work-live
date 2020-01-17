@@ -6,7 +6,7 @@ import pymysql
 import pandas as pd
 import seaborn as sns
 import warnings; warnings.filterwarnings(action='once')
-
+import matplotlib.dates as mdates
 large = 500
 med = 16
 small = 12
@@ -25,7 +25,10 @@ plt.style.use('seaborn-whitegrid')
 sns.set_style("white")
 
 myfont = fm.FontProperties(fname=r'C:\Windows\Fonts\STXINWEI.TTF')
-
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+#指定X轴的以日期格式（带小时）显示
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%m'))
 def getDateFromDB(sql):
     db = pymysql.connect('127.0.0.1','root','Winson94','index_fund')
     cursor = db.cursor();
@@ -54,10 +57,8 @@ def showPic(data,xlabel,ylabel,categorie):
     for i, item in enumerate(categories):
         plt.plot(xlabel, ylabel, data=data.loc[data[categorie]==item, :], c=colors[i], label=str(item))
     
-    x = getlim(data[xlabel])
-    y = getlim(data[ylabel])
-    print((x,y))
-    plt.gca().set( ylim = y, xlabel = xlabel, ylabel = ylabel)
+    
+    plt.gca().set(xlabel = xlabel, ylabel = ylabel)
     
     plt.legend(fontsize=12)
     plt.xticks(fontsize=15)
@@ -72,7 +73,7 @@ def showIncome(user,fundtype):
     print(0)
 #基金走势图
 def showPer(user,fundtype):
-    sql = 'select fvh.code,fvh.nav,fvh.percentage,time(fvh.time) from fund_value_his fvh left join fund_hold_info fhi on fhi.code = fvh.code where fvh.time > CURRENT_DATE() and fhi.fund_type = "'+ fundtype +'" and fhi.user = "'+ user +'"'
+    sql = 'select fvh.code,fvh.nav,fvh.percentage,fvh.time from fund_value_his fvh left join fund_hold_info fhi on fhi.code = fvh.code where fvh.time > CURRENT_DATE() and fhi.fund_type = "'+ fundtype +'" and fhi.user = "'+ user +'"'
     data = pd.DataFrame(list(getDateFromDB(sql)))
     data.columns = ['code','nav','per','time']
     xlabel = 'time'
