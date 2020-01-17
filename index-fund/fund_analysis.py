@@ -38,13 +38,26 @@ def getDateFromCSV(path):
     data = pd.read_csv(path)
     return data
 
+# Bsae function
+def getlim(series):
+    #series = np.sort(series, kind = 'heapsort')
+    min_series = series[series.idxmin()]
+    max_series = series[series.idxmax()]
+    tenth_scale = (max_series - min_series) / 20.0
+    return (min_series - tenth_scale,max_series + tenth_scale)
+
+
 def showPic(data,xlabel,ylabel,categorie):
     categories = np.unique(data[categorie])
     print(len(categories))
     colors = [plt.cm.tab10(i/float(len(categories)-1)) for i in range(len(categories))]
     for i, item in enumerate(categories):
         plt.plot(xlabel, ylabel, data=data.loc[data[categorie]==item, :], c=colors[i], label=str(item))
-    plt.gca().set(xlabel = xlabel, ylabel = ylabel)
+    
+    x = getlim(data[xlabel])
+    y = getlim(data[ylabel])
+    print((x,y))
+    plt.gca().set( ylim = y, xlabel = xlabel, ylabel = ylabel)
     
     plt.legend(fontsize=12)
     plt.xticks(fontsize=15)
@@ -59,7 +72,7 @@ def showIncome(user,fundtype):
     print(0)
 #基金走势图
 def showPer(user,fundtype):
-    sql = 'select fvh.code,fvh.nav,fvh.percentage,DATE_FORMAT(fvh.time,"%H:%i分") from fund_value_his fvh left join fund_hold_info fhi on fhi.code = fvh.code where fvh.time > CURRENT_DATE() and fhi.fund_type = "'+ fundtype +'" and fhi.user = "'+ user +'"'
+    sql = 'select fvh.code,fvh.nav,fvh.percentage,time(fvh.time) from fund_value_his fvh left join fund_hold_info fhi on fhi.code = fvh.code where fvh.time > CURRENT_DATE() and fhi.fund_type = "'+ fundtype +'" and fhi.user = "'+ user +'"'
     data = pd.DataFrame(list(getDateFromDB(sql)))
     data.columns = ['code','nav','per','time']
     xlabel = 'time'
